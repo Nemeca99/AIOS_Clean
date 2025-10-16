@@ -59,14 +59,19 @@ class DreamCore:
     
     # === AIOS V5: AUTONOMOUS HEARTBEAT METHODS ===
     
-    def pulse(self):
+    def pulse(self, pulse_context: Dict = None):
         """
         Autonomous heartbeat pulse (like Nova AI resonance loops)
         
+        V5.1: Accepts pulse_context from luna heartbeat for adaptive consolidation
+        
         Triggers:
-        1. Conversation fragment consolidation
+        1. Conversation fragment consolidation (pulse-aware)
         2. Memory optimization
         3. Pulse logging
+        
+        Args:
+            pulse_context: Optional dict with pulse_bpm, pulse_hvv from luna heartbeat
         """
         self.total_pulses += 1
         
@@ -74,19 +79,22 @@ class DreamCore:
             # Heart pulse triggers brainstem
             self.heart.pulse()
         
-        # Trigger consolidation every pulse
-        result = self.consolidate_conversation_fragments(verbose=False)
+        # Trigger consolidation every pulse (pass pulse metrics for adaptive behavior)
+        result = self.consolidate_conversation_fragments(verbose=False, pulse_context=pulse_context)
         
         if result.get('status') == 'success':
             self.total_consolidations += 1
         
         if self.total_pulses % 10 == 0:
-            print(f"[dream_core] 💓 Heartbeat {self.total_pulses} (consolidations: {self.total_consolidations})")
+            mode = result.get('mode', 'unknown')
+            print(f"[dream_core] 💓 Heartbeat {self.total_pulses} (mode: {mode}, consolidations: {self.total_consolidations})")
         
         return {
             'pulse': self.total_pulses,
             'consolidations': self.total_consolidations,
-            'heart_enabled': self.heart_enabled
+            'heart_enabled': self.heart_enabled,
+            'mode': result.get('mode'),
+            'pulse_bpm': result.get('pulse_bpm', 0.0)
         }
     
     def get_heartbeat_stats(self):
@@ -98,9 +106,36 @@ class DreamCore:
             'heartbeat_rate': self.heart.heartbeat_rate if self.heart_enabled else None
         }
     
-    def consolidate_conversation_fragments(self, similarity_threshold: float = 0.8, verbose: bool = False) -> Dict[str, Any]:
-        """Consolidate conversation fragments during dream state."""
+    def consolidate_conversation_fragments(self, similarity_threshold: float = 0.8, verbose: bool = False, pulse_context: Dict = None) -> Dict[str, Any]:
+        """
+        Consolidate conversation fragments during dream state.
+        
+        V5.1: Pulse-aware consolidation - adapts depth based on activity level.
+        
+        Args:
+            similarity_threshold: Base threshold for grouping
+            verbose: Detailed logging
+            pulse_context: Optional pulse metrics from heartbeat (pulse_bpm, pulse_hvv)
+        
+        Returns:
+            dict: Consolidation result with status, counts, mode
+        """
+        # V5.1: Pulse-aware consolidation mode
+        pulse_bpm = 0.0
+        consolidation_mode = "cold_path"  # Default: deep consolidation
+        
+        if pulse_context:
+            pulse_bpm = float(pulse_context.get('pulse_bpm', 0.0))
+            pulse_hot_threshold = 0.02  # From response_generator pulse config
+            
+            if pulse_bpm >= pulse_hot_threshold:
+                consolidation_mode = "hot_path"  # High activity: prioritize recent, defer deep
+                similarity_threshold = min(0.9, similarity_threshold + 0.1)  # Tighter grouping
+            else:
+                consolidation_mode = "cold_path"  # Low activity: deep consolidation
+        
         print(f"🌙 Starting Conversation Fragment Consolidation")
+        print(f"   Mode: {consolidation_mode} (pulse_bpm={pulse_bpm:.4f})")
         print(f"   Similarity Threshold: {similarity_threshold}")
         
         try:
@@ -195,7 +230,9 @@ class DreamCore:
             return {
                 "status": "success", 
                 "consolidated_messages": consolidated_count,
-                "processed_files": len(conversation_files)
+                "processed_files": len(conversation_files),
+                "mode": consolidation_mode,
+                "pulse_bpm": pulse_bpm
             }
             
         except Exception as e:
