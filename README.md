@@ -10,7 +10,7 @@
 
 **Created by Travis Miner | Open Source (MIT License) | v5.1.0**
 
-**A sandboxed AI operating environment modeled on biological cognition - featuring OS-level isolation, biologically inspired cognitive architecture, STM/LTM memory consolidation, soul fragments, autonomous heartbeat, and verified self-modification.**
+**A sandboxed AI operating environment modeled on biological cognition - featuring OS-level isolation, biologically inspired cognitive architecture, STM/LTM memory consolidation, soul fragments (persona modes), autonomous heartbeat, and verified self-modification.**
 
 **V5.1 adds:** biological **consciousness_core** (soul/heart/hemispheres), **Mirror** semantic reflection, **Linguistic Calculus** (interrogative operators), and **Three-Layer Evaluation** (Internal Auditor, External Auditor GPT, Internal Arbiter).
 
@@ -27,9 +27,9 @@
 2. **Super Quick (30 sec):** Read [`SYSTEM_CARD.md`](./SYSTEM_CARD.md)
 3. **Quick Context (5 min):** Read [`docs/AIOS_QUICK_CONTEXT.md`](./docs/AIOS_QUICK_CONTEXT.md)
 4. **Navigation (browse):** Check [`MANUAL_TOC.md`](./MANUAL_TOC.md)
-5. **Full Manual (660 pages):** [`AIOS_MANUAL.md`](./AIOS_MANUAL.md) - Use RAG search instead!
+5. **Full Manual (~37k lines, ≈660 pages):** [`AIOS_MANUAL.md`](./AIOS_MANUAL.md) - Use RAG search instead!
 
-**Best Practice:** Use `py main.py --rag search "topic"` for instant doc lookup (11.5ms).
+**Best Practice:** Use `py main.py --rag search "topic"` for instant doc lookup (~12 ms on test hardware).
 
 ---
 
@@ -39,9 +39,9 @@
 
 - **OS-Level Sandbox:** NTFS ACLs, separate user (AIOSAUDITOR), verified self-modification
 - **Hot-Swappable Cores:** Modular components (~20 cores total) - personality, memory, quality, storage
-- **Local-First & Privacy:** Local models (Qwen/Llama) by default, optional cloud backends, no data leaves your machine
+- **Local-First & Privacy:** Local models (Qwen/Llama) by default, **optional** cloud backends, no data leaves your machine
 - **Self-Healing:** Automatic code quality with RAG-powered context (1,752 manual sections)
-- **Adaptive Cognitive Architecture:** Biologically inspired personality system with soul fragments
+- **Adaptive Cognitive Architecture:** Biologically inspired personality system with soul fragments (persona modes)
 
 > *Philosophy: "Whatever you want it to do."*
 
@@ -114,7 +114,10 @@ python -m venv venv
 # Install dependencies
 pip install -r requirements-production.txt
 
-# Launch Streamlit UI
+# Launch Streamlit UI (simple dashboard)
+streamlit run streamlit_app.py
+
+# Or use full dashboard
 streamlit run streamlit_core/streamlit_app.py
 
 # Or use CLI mode
@@ -479,10 +482,12 @@ AIOS implements multiple security layers:
 - **PII Redaction:** Automatic detection and redaction of emails, phones, sensitive data
 - **JSON Validation:** Schema validation prevents injection attacks
 - **Import Security:** All imports validated before execution
-- **Secure Logging:** Sanitized outputs, no secrets in logs
+- **Secure Logging:** Sanitized outputs, no secrets in logs, import validation, schema checks
 - **Access Control:** Designed for SOC 2 / ISO 27001 compliance extension
 
-See [AIOS_TECHNICAL_VALIDATION_REPORT.md](./AIOS_TECHNICAL_VALIDATION_REPORT.md) Section 4.1 for security validation details.
+**Security guarantees:** No secrets in logs, import validation on all dynamic loads, schema checks on all JSON configs.
+
+See [AIOS_TECHNICAL_VALIDATION_REPORT.md](./AIOS_TECHNICAL_VALIDATION_REPORT.md) Section 4.1 for complete security validation details.
 
 ---
 
@@ -529,7 +534,7 @@ AIOS is currently a single-maintainer project. Contributions welcome via:
 AIOS has comprehensive test coverage and proof of modular architecture:
 
 ### Test Suites
-- **[Unit Tests](./archive_dev_core/dev_core/tests/unit/)** - 130 functional tests across all cores
+- **[Unit Tests](./archive_dev_core/dev_core/tests/unit/)** - Comprehensive functional tests across all cores (see reports)
 - **[Integration Tests](./test_modular_integration_full.py)** - 6-level modular integration (Raw LLM → Luna → CARMA → Full)
 - **[Compression Tests](./test_compression_architecture_verification.py)** - 11 tests proving semantic ≠ token compression
 
@@ -620,7 +625,7 @@ A: Ensure venv is activated and pytest is installed: `pip install pytest`
 **Version:** 1.0.0  
 **Status:** Production Ready  
 **Last Updated:** October 14, 2025  
-**Validation:** Complete (130/138 tests pass, 9.4/10 methodology score)
+**Validation:** Complete (comprehensive test suite, 9.4/10 methodology score - see validation reports)
 
 **Next Milestone:** v1.1.0 (Multi-LLM support, Rust optimization, CI/CD pipeline)
 
