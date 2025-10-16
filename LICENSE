@@ -1,0 +1,70 @@
+MIT License
+
+Copyright (c) 2025 Travis Miner
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Additional Terms
+
+### Attribution
+
+When using AIOS in derivative works, academic publications, or commercial products, 
+please cite as:
+
+```
+AIOS_clean - Adaptive Intelligence Operating System (v5.1.0)
+Created by Travis Miner
+Repository: https://github.com/Nemeca99/AIOS_Clean
+Year: 2025
+```
+
+### Research Use
+
+AIOS validation methodology and architecture are available for academic research.
+When citing AIOS in research publications, please reference:
+
+- AIOS Technical Validation Report (AIOS_TECHNICAL_VALIDATION_REPORT.md)
+- Development methodology validation (9.4/10 composite score)
+- Triple-validation model (Code + Human + Third-party AI evaluation)
+
+### Commercial Use
+
+AIOS is free for commercial use under MIT license terms. No attribution required
+for commercial deployments, but appreciated if you found it useful.
+
+### Disclaimer
+
+AIOS is an AI orchestration framework. Users are responsible for:
+- Compliance with LLM provider terms of service
+- Data privacy and security in their deployments
+- Appropriate use of AI-generated content
+- Validation of outputs for their specific use cases
+
+The authors provide no warranty and accept no liability for damages arising
+from use of this software.
+
+---
+
+**License Version:** 1.0  
+**Effective Date:** October 16, 2025  
+**SPDX-License-Identifier:** MIT  
+**Creator:** Travis Miner (All Rights Reserved for Original Work; MIT for Distribution)
+

@@ -1,0 +1,170 @@
+# AIOS Clean .gitignore
+# Strategy: Ignore large files, caches, and dev-only folders
+
+# ============================================================================
+# NEVER UPLOAD - Dev archive (local only)
+# ============================================================================
+archive_dev_core/
+
+# ============================================================================
+# NEVER UPLOAD - Dot folders (standard practice)
+# ============================================================================
+.*
+!.gitignore
+.github/
+.githooks/
+.cursor/
+
+# ============================================================================
+# NEVER UPLOAD - Virtual environments
+# ============================================================================
+venv/
+env/
+ENV/
+
+# ============================================================================
+# NEVER UPLOAD - Python cache and build artifacts
+# ============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+
+# ============================================================================
+# NEVER UPLOAD - Large data files and caches
+# ============================================================================
+# Data core - only keep essential configs and code
+data_core/FractalCache/
+data_core/ArbiterCache/
+data_core/exports/
+data_core/embeddings/
+data_core/analytics/
+data_core/temp/
+data_core/logs/
+data_core/cache/
+data_core/conversations/
+data_core/Data_Backup_Analysis/
+data_core/archive/
+data_core/storage/
+data_core/extra/
+data_core/results/
+data_core/journey_dont_delete/
+data_core/learning/data/
+
+# Consciousness core logs and caches
+consciousness_core/drift_logs/
+consciousness_core/drift_logs_test/
+consciousness_core/memlong/
+consciousness_core/memshort/
+consciousness_core/docs/*LOGS*.md
+consciousness_core/docs/*logs*.md
+
+# Support core usage data
+support_core/usage-events-*.csv
+
+# ============================================================================
+# NEVER UPLOAD - Backup files
+# ============================================================================
+backup_core/*.zip
+backup_core/active_backup/
+backup_core/archive_backup/
+backup_core/backup_tracking.json
+backup_core/file_checksums.json
+.aios_backup/
+
+# ============================================================================
+# NEVER UPLOAD - Model files (too large for GitHub)
+# ============================================================================
+*.bin
+*.gguf
+*.safetensors
+*.pt
+*.pth
+*.onnx
+
+# ============================================================================
+# NEVER UPLOAD - Databases (too large)
+# ============================================================================
+*.db
+*.sqlite
+*.sqlite3
+
+# ============================================================================
+# NEVER UPLOAD - Large files and portfolios
+# ============================================================================
+Portfolio/
+
+# ============================================================================
+# NEVER UPLOAD - Logs
+# ============================================================================
+*.log
+log/
+logs/
+healing_logs/
+automation_logs/
+
+# ============================================================================
+# NEVER UPLOAD - Temporary files
+# ============================================================================
+temp/
+tmp/
+*.tmp
+sandbox/
+
+# ============================================================================
+# NEVER UPLOAD - IDE files
+# ============================================================================
+*.swp
+*.swo
+
+# ============================================================================
+# NEVER UPLOAD - OS files
+# ============================================================================
+.DS_Store
+Thumbs.db
+
+# ============================================================================
+# NEVER UPLOAD - Test outputs and reports
+# ============================================================================
+test_output/
+test_results/
+reports/
+*.report.json
+test_*.json
+demo_*.json
+*_report.json
+cross_arch_results.json
+luna_100q_*.json
+luna_100q_*.log
+audit_trends.jsonl
+*.audit.json
+*.sarif
+
+# ============================================================================
+# NEVER UPLOAD - Rust build artifacts
+# ============================================================================
+**/target/
+**/Cargo.lock
+
+# ============================================================================
+# NEVER UPLOAD - Generated files and dev docs
+# ============================================================================
+*.json.backup
+*.md.backup
+*.code-workspace
+*.pdf
+AIOS_MANUAL.html
+Profile-*/
+*REFACTOR*.md
+*COMPLETE*.md
+*SUMMARY*.md
+*INTEGRATION*.md
+*REORGANIZATION*.md
+
+# ============================================================================
+# NEVER UPLOAD - Streamlit cache
+# ============================================================================
+.streamlit/

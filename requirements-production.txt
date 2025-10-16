@@ -1,0 +1,18 @@
+# AIOS Production Dependencies
+# Runtime requirements only (no dev/test tools)
+
+# UI Framework
+streamlit>=1.28.0
+
+# Core ML/AI
+numpy>=1.24.0
+sentence-transformers>=2.2.0
+faiss-cpu>=1.7.4
+
+# HTTP/API
+requests>=2.31.0
+
+# Utilities
+python-dotenv>=1.0.0
+jsonschema>=4.0.0
+

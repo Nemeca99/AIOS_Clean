@@ -1,0 +1,437 @@
+openapi: 3.0.3
+info:
+  title: AIOS API
+  description: |
+    Adaptive Intelligence Operating System API
+    
+    Provides endpoints for:
+    - AI response generation with Luna personality
+    - Memory retrieval from CARMA semantic cache
+    - Memory consolidation via Dream core
+    - System health and metrics
+    
+    **Authentication:** Not yet implemented (v1.1)
+    
+    **Base URL:** http://localhost:8000
+    
+  version: 1.0.0
+  contact:
+    name: AIOS Team
+    url: https://github.com/Nemeca99/AIOS
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+  - url: http://localhost:8000/api/v1
+    description: API v1 endpoint
+
+tags:
+  - name: generation
+    description: AI response generation with personality
+  - name: memory
+    description: CARMA semantic memory operations
+  - name: consolidation
+    description: Dream core memory consolidation
+  - name: system
+    description: System health and metrics
+
+paths:
+  /api/v1/generate:
+    post:
+      tags:
+        - generation
+      summary: Generate AI response
+      description: |
+        Generate AI response using Luna personality system with optional CARMA memory context.
+        
+        **Features:**
+        - Big Five personality traits
+        - Token budget control
+        - Semantic memory retrieval
+        - Provenance tracking
+      operationId: generate_response
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                  description: User query or prompt
+                  example: "Explain quantum computing in simple terms"
+                personality:
+                  type: object
+                  description: Big Five personality trait overrides (0-1 scale)
+                  properties:
+                    openness:
+                      type: number
+                      format: float
+                      minimum: 0
+                      maximum: 1
+                      example: 0.8
+                    conscientiousness:
+                      type: number
+                      format: float
+                      minimum: 0
+                      maximum: 1
+                      example: 0.7
+                    extraversion:
+                      type: number
+                      format: float
+                      minimum: 0
+                      maximum: 1
+                      example: 0.6
+                    agreeableness:
+                      type: number
+                      format: float
+                      minimum: 0
+                      maximum: 1
+                      example: 0.9
+                    neuroticism:
+                      type: number
+                      format: float
+                      minimum: 0
+                      maximum: 1
+                      example: 0.3
+                use_memory:
+                  type: boolean
+                  description: Enable CARMA memory retrieval
+                  default: true
+                  example: true
+                token_budget:
+                  type: string
+                  enum: [LOW, MODERATE, CRITICAL]
+                  description: Token budget tier
+                  default: MODERATE
+                  example: "MODERATE"
+                include_provenance:
+                  type: boolean
+                  description: Include decision provenance in response
+                  default: false
+      responses:
+        '200':
+          description: Successful response generation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+                    description: Generated response text
+                    example: "Quantum computing uses qubits that can exist in superposition..."
+                  tokens_used:
+                    type: integer
+                    description: Number of tokens generated
+                    example: 45
+                  memory_fragments_used:
+                    type: integer
+                    description: Number of CARMA fragments retrieved
+                    example: 3
+                  personality_applied:
+                    type: object
+                    description: Effective personality traits used
+                  provenance:
+                    type: object
+                    description: Decision provenance (if requested)
+                    properties:
+                      trait_classification:
+                        type: object
+                      response_value:
+                        type: string
+                      budget_tier:
+                        type: string
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/memory/search:
+    post:
+      tags:
+        - memory
+      summary: Search CARMA memory
+      description: Retrieve semantically similar memory fragments
+      operationId: search_memory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                  description: Search query
+                  example: "machine learning neural networks"
+                top_k:
+                  type: integer
+                  description: Number of results to return
+                  default: 5
+                  minimum: 1
+                  maximum: 50
+                  example: 5
+                similarity_threshold:
+                  type: number
+                  format: float
+                  description: Minimum similarity score (0-1)
+                  default: 0.5
+                  minimum: 0
+                  maximum: 1
+                  example: 0.7
+      responses:
+        '200':
+          description: Memory fragments retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fragments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MemoryFragment'
+                  count:
+                    type: integer
+                    example: 3
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/memory/store:
+    post:
+      tags:
+        - memory
+      summary: Store memory fragment
+      description: Store new memory fragment in CARMA
+      operationId: store_memory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+                  description: Fragment content
+                  example: "Neural networks use backpropagation for training"
+                metadata:
+                  type: object
+                  description: Optional metadata
+                  properties:
+                    topic:
+                      type: string
+                      example: "ml"
+                    importance:
+                      type: number
+                      format: float
+                      minimum: 0
+                      maximum: 1
+                      example: 0.8
+      responses:
+        '201':
+          description: Fragment stored
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fragment_id:
+                    type: string
+                    example: "frag_abc123"
+                  stored_at:
+                    type: string
+                    format: date-time
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/consolidate:
+    post:
+      tags:
+        - consolidation
+      summary: Trigger memory consolidation
+      description: |
+        Trigger Dream core memory consolidation (asynchronous).
+        
+        **Note:** This is a background operation that may take several minutes.
+      operationId: trigger_consolidation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                algorithm:
+                  type: string
+                  enum: [semantic, temporal, hierarchical]
+                  description: Consolidation algorithm
+                  default: semantic
+                force:
+                  type: boolean
+                  description: Force consolidation even if recent
+                  default: false
+      responses:
+        '202':
+          description: Consolidation started (async)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "started"
+                  job_id:
+                    type: string
+                    example: "job_123"
+                  estimated_duration_sec:
+                    type: integer
+                    example: 180
+        '429':
+          description: Consolidation already in progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/status:
+    get:
+      tags:
+        - system
+      summary: System health and status
+      description: Get current system health and operational metrics
+      operationId: get_status
+      responses:
+        '200':
+          description: System status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, degraded, unhealthy]
+                    example: "healthy"
+                  version:
+                    type: string
+                    example: "1.0.0"
+                  uptime_seconds:
+                    type: integer
+                    example: 86400
+                  lm_studio_available:
+                    type: boolean
+                    example: true
+                  memory_cache_size:
+                    type: integer
+                    description: Number of fragments in CARMA
+                    example: 1523
+                  compression_ratio:
+                    type: number
+                    format: float
+                    description: Current compression ratio
+                    example: 0.313
+                  last_consolidation:
+                    type: string
+                    format: date-time
+                    example: "2025-10-14T15:30:00Z"
+
+  /api/v1/metrics:
+    get:
+      tags:
+        - system
+      summary: Prometheus metrics
+      description: Get Prometheus-formatted metrics for monitoring
+      operationId: get_metrics
+      responses:
+        '200':
+          description: Prometheus metrics
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  # HELP aios_requests_total Total requests processed
+                  # TYPE aios_requests_total counter
+                  aios_requests_total 1523
+                  
+                  # HELP aios_latency_seconds Response latency
+                  # TYPE aios_latency_seconds histogram
+                  aios_latency_seconds_bucket{le="0.1"} 100
+                  aios_latency_seconds_bucket{le="0.5"} 450
+                  aios_latency_seconds_bucket{le="1.0"} 1200
+                  aios_latency_seconds_sum 2500
+                  aios_latency_seconds_count 1523
+
+components:
+  schemas:
+    MemoryFragment:
+      type: object
+      properties:
+        fragment_id:
+          type: string
+          example: "frag_abc123"
+        content:
+          type: string
+          example: "Machine learning uses neural networks"
+        timestamp:
+          type: integer
+          format: int64
+          example: 1697299200
+        metadata:
+          type: object
+          properties:
+            topic:
+              type: string
+            importance:
+              type: number
+              format: float
+        similarity_score:
+          type: number
+          format: float
+          description: Similarity to query (if from search)
+          example: 0.85
+
+    Error:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          example: "invalid_request"
+        message:
+          type: string
+          example: "Query parameter is required"
+        details:
+          type: object
+          description: Additional error details
+

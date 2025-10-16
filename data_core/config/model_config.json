@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "model_config": {
+    "version": "1.0",
+    "last_updated": "2025-10-03",
+    "description": "Centralized model configuration for AIOS Clean - change models here instead of hardcoding",
+    "models": {
+      "main_llm": {
+        "name": "cognitivecomputations_dolphin-mistral-24b-venice-edition@q5_k_m",
+        "type": "main_model",
+        "description": "Primary LLM for complex queries and responses - Dolphin Mistral 24B",
+        "tier": "high_complexity",
+        "api_endpoint": "http://localhost:1234/v1/chat/completions"
+      },
+      "embedder": {
+        "name": "llama-3.2-1b-instruct-abliterated",
+        "type": "embedding_model",
+        "description": "Lightweight model for embeddings and simple responses",
+        "tier": "trivial",
+        "api_endpoint": "http://localhost:1234/v1/embeddings",
+        "fallback_dimension": 1024
+      },
+      "draft_model": {
+        "name": "mlabonne_qwen3-0.6b-abliterated",
+        "type": "draft_model",
+        "description": "Fast draft model for speculative decoding",
+        "tier": "draft",
+        "enabled": false,
+        "api_endpoint": "http://localhost:1234/v1/chat/completions"
+      }
+    },
+    "alternative_models": {
+      "qwen3_4b_thinking": {
+        "name": "qwen/qwen3-4b-thinking-2507",
+        "type": "main_model",
+        "description": "Alternative main model - Qwen3 4B Thinking",
+        "tier": "high_complexity"
+      },
+      "liquid_lfm2": {
+        "name": "liquid/lfm2-1.2b",
+        "type": "main_model",
+        "description": "Alternative main model - Liquid LFM2 1.2B for cross-architecture comparison",
+        "tier": "high_complexity"
+      },
+      "llama_7b_rogue": {
+        "name": "Rogue-Creative-7B-Dark-Horror",
+        "type": "main_model",
+        "description": "Alternative main model - Rogue Creative 7B",
+        "tier": "high_complexity"
+      }
+    },
+    "model_switching": {
+      "instructions": "To switch models, update the 'name' field in the active model section above",
+      "current_main": "cognitivecomputations_dolphin-mistral-24b-venice-edition@q5_k_m",
+      "current_embedder": "lite-mistral-150m-v2-instruct@q6_k_l"
+    }
+  }
+}
