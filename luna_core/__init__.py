@@ -35,7 +35,8 @@ from .systems.luna_response_value_classifier import LunaResponseValueClassifier
 from .systems.luna_semantic_compression_filter import LunaSemanticCompressionFilter
 from .systems.luna_soul_metric_system import LunaSoulMetricSystem
 from .systems.luna_token_time_econometric_system import LunaTokenTimeEconometricSystem
-from .systems.llm_performance_evaluator import LLMPerformanceEvaluationSystem
+# Soft-quarantined (unused - External Auditor sweep 2025-10-16):
+# from .systems.llm_performance_evaluator import LLMPerformanceEvaluationSystem
 
 __all__ = [
     'LunaSystem',
@@ -51,7 +52,7 @@ __all__ = [
     'LunaSemanticCompressionFilter',
     'LunaSoulMetricSystem',
     'LunaTokenTimeEconometricSystem',
-    'LLMPerformanceEvaluationSystem',
+    # 'LLMPerformanceEvaluationSystem',  # Soft-quarantined (unused)
     'get_commands',
     'handle_command'
 ]
