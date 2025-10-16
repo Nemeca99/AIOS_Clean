@@ -1,0 +1,104 @@
+# AIOS Test Suite CI Configuration (Example)
+# 
+# This is a reference configuration for GitHub Actions.
+# Customize as needed for your CI provider.
+
+name: AIOS Test Suite
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  # Daily pipeline: AIOS core tests only
+  core-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov hypothesis
+    
+    - name: Run core tests (exclude vendor)
+      run: |
+        pytest -m "core and not vendor" \
+          --cov \
+          --cov-report=xml \
+          --cov-report=term-missing \
+          --junitxml=reports/junit.xml \
+          --maxfail=1 \
+          --durations=10 \
+          -q
+      env:
+        PYTEST_ADDOPTS: "-o cache_dir=.pytest_cache"
+    
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage.xml
+        flags: unittests
+        name: aios-core-coverage
+  
+  # Nightly pipeline: vendor sanity checks
+  vendor-sanity:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest
+    
+    - name: Run vendor sanity checks
+      run: |
+        pytest -m vendor -q --tb=line
+  
+  # Integration tests (require LM Studio)
+  integration-tests:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest hypothesis
+    
+    - name: Run integration tests
+      run: |
+        pytest -m integration -q --tb=short
+      continue-on-error: true  # Integration tests may fail without LM Studio
+
+# Hypothesis settings for CI reproducibility
+# Set in repository secrets: HYPOTHESIS_SEED=12345
+

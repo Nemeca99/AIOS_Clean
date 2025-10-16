@@ -240,9 +240,15 @@ def test_pulse_window_clamp():
     assert window_seconds == pulse_window_seconds * 4
 
 
-def test_pulse_cold_start():
+def test_pulse_cold_start(fake_monotonic):
     """
     Test 4: Cold start - first heartbeat primes, second emits.
+    
+    Tests that the pulse system:
+    - Primes timestamp on first heartbeat without emitting metrics
+    - Computes valid metrics on second heartbeat
+    
+    Uses fake_monotonic fixture for deterministic, instant testing (no sleep).
     """
     import time
     from collections import deque
@@ -251,13 +257,13 @@ def test_pulse_cold_start():
     pulse_tick_counter = 0
     pulse_one_positions = deque(maxlen=100000)
     
-    # First heartbeat - prime only
+    # First heartbeat - prime only (time.monotonic() -> 0.0)
     now_ts = time.monotonic()
     if pulse_last_heartbeat_ts is None:
         pulse_last_heartbeat_ts = now_ts
-        # Skip emission
+        # Skip emission on first heartbeat
     
-    assert pulse_last_heartbeat_ts is not None
+    assert pulse_last_heartbeat_ts == 0.0, "Timestamp should be primed at 0.0"
     
     # Emit some ticks
     for i in range(5):
@@ -265,16 +271,19 @@ def test_pulse_cold_start():
         if i % 2 == 0:
             pulse_one_positions.append(pulse_tick_counter)
     
-    # Second heartbeat - compute
-    time.sleep(0.01)
+    # Second heartbeat - compute (time.monotonic() -> 0.1, no sleep needed)
     now_ts = time.monotonic()
     window_seconds = now_ts - pulse_last_heartbeat_ts
     ones = len(pulse_one_positions)
     pulse_bpm = ones / window_seconds if window_seconds > 0 else 0.0
     
-    assert ones == 3
-    assert pulse_tick_counter == 5
-    assert pulse_bpm > 0
+    # Verify state
+    assert ones == 3, f"Expected 3 ones, got {ones}"
+    assert pulse_tick_counter == 5, f"Expected 5 ticks, got {pulse_tick_counter}"
+    assert window_seconds == 0.1, f"Expected 0.1s window (deterministic), got {window_seconds}"
+    
+    # BPM should be exactly 30 (3 ones / 0.1 seconds = 30 ops/sec)
+    assert pulse_bpm == 30.0, f"Expected 30.0 BPM, got {pulse_bpm}"
 
 
 def test_pulse_consolidation_modes():
@@ -302,23 +311,25 @@ def test_pulse_consolidation_modes():
         pytest.skip("Dream core not available")
 
 
-def test_pulse_zero_activity():
+def test_pulse_zero_activity(fake_monotonic):
     """
     Test 6: Zero-activity edge case - BPM=0, HRV=0 without errors.
+    
+    Uses fake_monotonic for instant, deterministic testing.
     """
     import time
     from collections import deque
     
     pulse_tick_counter = 0
     pulse_one_positions = deque(maxlen=100000)
-    pulse_last_heartbeat_ts = time.monotonic()
+    pulse_last_heartbeat_ts = time.monotonic()  # 0.0
     
     # Emit only inactive ticks
     for i in range(10):
         pulse_tick_counter += 1
         # Don't add to pulse_one_positions (all inactive)
     
-    time.sleep(0.01)
+    # Compute metrics (time.monotonic() -> 0.1, no sleep needed)
     now_ts = time.monotonic()
     window_seconds = now_ts - pulse_last_heartbeat_ts
     ones = len(pulse_one_positions)
@@ -329,6 +340,7 @@ def test_pulse_zero_activity():
     
     assert ones == 0
     assert ticks == 10
+    assert window_seconds == 0.1  # Deterministic
     assert pulse_bpm == 0.0
     assert pulse_hvv == 0.0
 
